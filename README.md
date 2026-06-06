@@ -1,337 +1,312 @@
-# 💊 Pharmacie Intelligente - Application de Gestion Pharmaceutique
+# 💊 Pharmacie Intelligente
 
-## 📋 Présentation du Projet
-
-**Pharmacie Intelligente** est une application web complète conçue pour la gestion d'une pharmacie. Elle permet aux administrateurs, pharmaciens, caissiers et super administrateurs de gérer efficacement les médicaments, les ventes, les stocks, les clients, les fournisseurs et les rapports statistiques à partir d'une interface intuitive et sécurisée.
+Application web SaaS de gestion pharmaceutique développée avec **Laravel 11**, **Vue.js 3**, **MySQL** et **Tailwind CSS**.
 
 ---
 
-## 🎯 Objectifs du Projet
+# 📋 Présentation du Projet
 
-- Digitaliser la gestion quotidienne d'une pharmacie
-- Réduire les erreurs liées aux stocks et aux ventes
-- Automatiser le suivi des médicaments et des alertes
-- Générer des rapports de gestion en temps réel
-- Faciliter la gestion des clients et fournisseurs
-- Assurer une meilleure traçabilité des opérations
-- Permettre au Super Admin de gérer l'ensemble des pharmacies
+**Pharmacie Intelligente** est une plateforme moderne permettant la gestion complète d'une pharmacie.
 
----
+L'application facilite la gestion :
 
-## 🚀 Fonctionnalités Principales
+* des médicaments
+* des stocks
+* des ventes
+* des clients
+* des fournisseurs
+* des commandes
+* des utilisateurs
+* des statistiques
 
-### 🔐 Authentification et Sécurité
-
-- Connexion sécurisée avec Laravel Sanctum
-- Gestion des sessions utilisateur
-- Gestion des rôles et permissions (Middleware + Policies)
-- Protection des routes API
-
-### 👥 Rôles disponibles
-
-| Rôle | Email | Mot de passe | Permissions |
-|------|-------|--------------|--------------|
-| **Super Administrateur** | superadmin@pharmacie.com | password | Gestion globale : pharmacies, utilisateurs, backups, statistiques |
-| **Administrateur** | admin@pharmacie-centrale.sn | password | Gestion complète de SA pharmacie |
-| **Pharmacien** | pharmacien@pharmacie-centrale.sn | password | Gestion médicaments, ventes, stocks |
-| **Caissier** | caissier@pharmacie-centrale.sn | password | Gestion des ventes uniquement |
+Elle intègre également un système **multi-pharmacies** permettant à un **Super Administrateur** de gérer plusieurs pharmacies depuis une seule interface.
 
 ---
 
-### 👑 Super Administrateur
+# 🎯 Objectifs du Projet
 
-Le Super Admin a une vision globale de la plateforme et peut :
-
-- ✅ Gérer toutes les pharmacies (création, modification, activation, suspension)
-- ✅ Voir les statistiques globales (chiffre d'affaires total, nombre de pharmacies, nombre d'utilisateurs)
-- ✅ Gérer les utilisateurs de toutes les pharmacies
-- ✅ Effectuer des backups de la base de données
-- ✅ Renouveler les abonnements des pharmacies
-
-**Routes dédiées au Super Admin :**
-
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/v1/super-admin/stats` | Statistiques globales |
-| GET | `/api/v1/super-admin/pharmacies` | Lister toutes les pharmacies |
-| POST | `/api/v1/super-admin/pharmacies` | Créer une pharmacie |
-| PUT | `/api/v1/super-admin/pharmacies/{id}` | Modifier une pharmacie |
-| DELETE | `/api/v1/super-admin/pharmacies/{id}` | Supprimer une pharmacie |
-| POST | `/api/v1/super-admin/pharmacies/{id}/activate` | Activer une pharmacie |
-| POST | `/api/v1/super-admin/pharmacies/{id}/suspend` | Suspendre une pharmacie |
-| GET | `/api/v1/super-admin/users` | Lister tous les utilisateurs |
-| GET | `/api/v1/backups` | Lister les backups |
-| POST | `/api/v1/backups/create` | Créer un backup |
-| GET | `/api/v1/backups/download/{filename}` | Télécharger un backup |
+* Digitaliser la gestion quotidienne d'une pharmacie
+* Réduire les erreurs liées aux stocks et aux ventes
+* Automatiser les alertes de stock faible et de péremption
+* Générer des rapports statistiques en temps réel
+* Faciliter la gestion des clients et fournisseurs
+* Assurer la traçabilité des opérations
+* Permettre la gestion centralisée de plusieurs pharmacies
 
 ---
 
-### 💊 Gestion des Médicaments
+# 🚀 Fonctionnalités Principales
 
-- ✅ Ajouter, modifier, supprimer un médicament
-- ✅ Archiver un médicament (Soft Delete)
-- ✅ Recherche dynamique par nom, DCI, catégorie
-- ✅ Filtrage avancé (catégorie, ordonnance requise)
-- ✅ Pagination
-- ✅ Import Excel (XLSX, XLS)
-- ✅ Export Excel
+## 🔐 Authentification & Sécurité
 
-**Informations gérées :**
-- Nom commercial, DCI, forme, dosage
-- Catégorie
-- Prix d'achat, prix de vente
-- Stock actuel, seuil d'alerte
-- Ordonnance obligatoire ou non
+* Authentification sécurisée avec Laravel Sanctum
+* Gestion des sessions utilisateur
+* Gestion des rôles et permissions
+* Protection des routes API
+* Contrôle d'accès selon le rôle
 
 ---
 
-### 📦 Gestion des Stocks
+# 👥 Gestion des Rôles
 
-**Gestion par lots :**
-- Quantité, numéro de lot
-- Date d'entrée, date de péremption
-- Fournisseur associé
-
-**Alertes automatiques :**
-- Stock bas (< seuil d'alerte)
-- Péremption proche (< 30 jours)
-
-**Historique :**
-- Entrées de stock
-- Sorties de stock (ventes)
+| Rôle                 | Description                       |
+| -------------------- | --------------------------------- |
+| Super Administrateur | Gestion globale de la plateforme  |
+| Administrateur       | Gestion complète d'une pharmacie  |
+| Pharmacien           | Gestion des médicaments et stocks |
+| Caissier             | Gestion des ventes                |
 
 ---
 
-### 💰 Gestion des Ventes
+# 👑 Super Administrateur
 
-**Types de vente :**
-- Vente sans ordonnance
-- Vente avec ordonnance (avec référence automatique)
+Le Super Administrateur dispose d'une vue globale sur toutes les pharmacies.
 
-**Fonctionnalités :**
-- Panier d'achat dynamique
-- Ajout de plusieurs produits
-- Calcul automatique du total
-- Calcul automatique de la monnaie
-- Historique des ventes
+## Fonctionnalités
 
-**Facturation :**
-- Génération PDF (DomPDF)
-- Téléchargement PDF
-- Envoi par email (Mailtrap / SMTP)
+### Dashboard Global
 
----
+* Nombre total de pharmacies
+* Nombre total d'utilisateurs
+* Statistiques de ventes
+* Graphiques analytiques
 
-### 👥 Gestion des Clients
+### Gestion des Pharmacies
 
-- Création, modification, suppression client
-- Historique d'achats
-- Recherche rapide par nom, prénom, téléphone
-- Médicaments chroniques (rappel automatique)
+* Création de pharmacies
+* Modification
+* Activation
+* Suspension
+* Suppression
 
-**Informations :**
-- Nom, prénom
-- Téléphone, email
-- Adresse
-- Médicaments chroniques
+### Gestion des Utilisateurs
 
----
+* Consultation de tous les utilisateurs
+* Gestion des rôles
 
-### 🏭 Gestion des Fournisseurs
+### Sauvegardes
 
-- Ajouter, modifier, supprimer un fournisseur
-- Consulter les commandes associées
-
-**Informations :**
-- Nom, contact
-- Téléphone, email
-- Adresse
+* Création de backups
+* Téléchargement des sauvegardes
+* Nettoyage des anciennes sauvegardes
 
 ---
 
-### 📋 Gestion des Commandes
+# 👨‍💼 Administrateur de Pharmacie
 
-- Création de bon de commande
-- Réception de commande
-- Mise à jour automatique du stock
-- Historique des commandes
+L'administrateur gère uniquement sa pharmacie.
 
----
+## Dashboard
 
-### 📊 Tableau de Bord (Dashboard)
+* Chiffre d'affaires
+* Nombre de ventes
+* Panier moyen
+* Top médicaments vendus
 
-Visualisation en temps réel avec graphiques (Chart.js) :
-- Chiffre d'affaires (journalier, mensuel, annuel)
-- Nombre de ventes
-- Panier moyen
-- Clients actifs
-- Top médicaments vendus
-- Répartition des modes de paiement
-- Performance des caissiers
-- Alertes stock (stock bas + péremption)
+## Gestion des Médicaments
 
----
+* Ajouter un médicament
+* Modifier un médicament
+* Supprimer un médicament
+* Recherche avancée
+* Import Excel
+* Export Excel
+* Soft Delete
 
-### 📧 Gestion des Emails
+## Gestion du Stock
 
-- Envoi automatique des factures par email
-- Support SMTP
-- Configuration Mailtrap pour les tests
+* Entrées de stock
+* Gestion par lots
+* Alertes de stock faible
+* Alertes de péremption
+* Historique des mouvements
 
----
+## Gestion des Ventes
 
-### 📂 Import / Export Excel
+* Création des ventes
+* Consultation
+* Annulation
+* Génération PDF
+* Envoi par email
 
-**Import :**
-- Format supporté : XLSX, XLS
-- Import des médicaments depuis Excel
-- Gestion des doublons (vérification nom + DCI)
+## Gestion des Clients
 
-**Export :**
-- Export des médicaments
-- Export des rapports statistiques
+* Création
+* Modification
+* Historique des achats
+* Médicaments chroniques
 
----
+## Gestion des Fournisseurs
 
-## 🛠 Technologies Utilisées
+* Ajouter
+* Modifier
+* Supprimer
 
-### Backend
+## Gestion des Commandes
 
-| Technologie | Version |
-|-------------|---------|
-| Laravel | 11.x |
-| PHP | 8.2+ |
-| Laravel Sanctum | - |
-| Eloquent ORM | - |
-| MySQL | 8.0+ |
+* Création de commandes
+* Réception des commandes
+* Mise à jour automatique du stock
 
-### Frontend
+## Rapports
 
-| Technologie | Version |
-|-------------|---------|
-| Vue.js | 3.x |
-| Vite | - |
-| Pinia | - |
-| Vue Router | 4.x |
-| Axios | - |
-| Tailwind CSS | 3.x |
+* Statistiques détaillées
+* Export Excel
 
-### Bibliothèques
+## Gestion des Utilisateurs
 
-| Bibliothèque | Utilisation |
-|--------------|-------------|
-| Chart.js | Graphiques dashboard |
-| DomPDF | Génération factures PDF |
-| PhpSpreadsheet | Import/Export Excel |
+* Création des comptes pharmaciens
+* Création des comptes caissiers
 
 ---
 
-## 🏗 Architecture Technique
+# 💊 Pharmacien
 
-### Backend (Laravel API REST)
+## Fonctionnalités
 
+### Médicaments
+
+* Consultation
+* Modification
+
+### Stock
+
+* Gestion des entrées
+* Alertes
+* Historique
+
+### Ventes
+
+* Création
+* Consultation
+
+### Clients
+
+* Consultation
+* Création
 
 ---
 
-## 📁 Structure du Projet
+# 🏪 Caissier
 
-### Backend
+## Fonctionnalités
+
+### Ventes
+
+* Création des ventes
+* Consultation de ses ventes
+
+### Clients
+
+* Consultation
+
+### Factures
+
+* Téléchargement PDF
+
+---
+
+# 🛠 Technologies Utilisées
+
+## Backend
+
+| Technologie     | Version |
+| --------------- | ------- |
+| Laravel         | 12.x    |
+| PHP             | 8.2+    |
+| Laravel Sanctum | Latest  |
+| MySQL           | 8.0+    |
+
+## Frontend
+
+| Technologie  | Version |
+| ------------ | ------- |
+| Vue.js       | 3.x     |
+| Vite         | Latest  |
+| Pinia        | Latest  |
+| Vue Router   | 4.x     |
+|      |
+
+## Bibliothèques
+
+| Bibliothèque   | Utilisation           |
+| -------------- | --------------------- |
+| Chart.js       | Graphiques            |
+| DomPDF         | Factures PDF          |
+| PhpSpreadsheet | Import / Export Excel |
+
+---
+
+# 🗄️ Base de Données
+
+## Tables Principales
+
+| Table           | Description           |
+| --------------- | --------------------- |
+| users           | Utilisateurs          |
+| pharmacies      | Pharmacies            |
+| categories      | Catégories            |
+| medicaments     | Médicaments           |
+| stock_lots      | Lots de stock         |
+| clients         | Clients               |
+| ventes          | Ventes                |
+| ligne_ventes    | Détails des ventes    |
+| fournisseurs    | Fournisseurs          |
+| commandes       | Commandes             |
+| ligne_commandes | Détails des commandes |
+
+---
+
+# 🔗 Relations Principales
 
 ```text
-app/
-├── Http/
-│   ├── Controllers/Api/V1/
-│   │   ├── AuthController.php
-│   │   ├── MedicamentController.php
-│   │   ├── VenteController.php
-│   │   ├── ClientController.php
-│   │   ├── FournisseurController.php
-│   │   ├── CommandeController.php
-│   │   ├── StockController.php
-│   │   ├── DashboardController.php
-│   │   ├── RapportController.php
-│   │   ├── UserController.php
-│   │   ├── PharmacieController.php
-│   │   └── SuperAdminController.php
-│   └── Middleware/
-│       └── RoleMiddleware.php
-│
-├── Models/
-│   ├── User.php
-│   ├── Medicament.php
-│   ├── Vente.php
-│   ├── Client.php
-│   ├── Fournisseur.php
-│   ├── Commande.php
-│   ├── StockLot.php
-│   ├── Categorie.php
-│   └── Pharmacie.php
-│
-├── Observers/
-│   ├── VenteObserver.php
-│   └── StockLotObserver.php
-│
-└── Policies/
-    ├── MedicamentPolicy.php
-    └── VentePolicy.php
+Pharmacie (1) ---- (N) Users
 
-database/
-├── migrations/ (12 migrations)
-└── seeders/ (8 seeders)
+Pharmacie (1) ---- (N) Medicaments
 
-routes/
-└── api.php
+Pharmacie (1) ---- (N) Clients
+
+Pharmacie (1) ---- (N) Ventes
+
+Categorie (1) ---- (N) Medicaments
+
+Medicament (1) ---- (N) StockLots
+
+Medicament (1) ---- (N) LigneVentes
+
+Vente (1) ---- (N) LigneVentes
+
+Client (1) ---- (N) Ventes
+
+Commande (1) ---- (N) LigneCommandes
+
+Fournisseur (1) ---- (N) Commandes
 ```
-
-### Frontend
-
-```text
-src/
-├── assets/
-├── components/
-├── layouts/
-├── router/
-├── services/
-├── stores/
-├── views/
-│   ├── auth/
-│   ├── admin/
-│   ├── pharmacien/
-│   ├── caissier/
-│   ├── super-admin/
-│   └── shared/
-├── App.vue
-└── main.js
-```
-
-
 
 ---
 
-## 🚀 Installation
+# 🚀 Installation
 
-### Prérequis
+## Prérequis
 
-- PHP 8.2+
-- Composer
-- Node.js 18+
-- MySQL 8.0+
+* PHP 8.2+
+* Composer
+* Node.js 18+
+* MySQL 8.0+
 
-### 1️⃣ Cloner le Projet
+---
+
+## 1. Cloner le projet
 
 ```bash
-git clone https://github.com/MauriceEnkoura/pharmacie-intelligente.git
+git clone https://github.com/Maurice-enkoura/pharmacie-intelligente-v2.git
+
 cd pharmacie-intelligente
+```
 
-composer install
-cp .env.example .env
-php artisan key:generate
+---
 
-
-
-## ⚙️ Installation
-
-### 2️⃣ Installation Backend
+## 2. Installation du Backend
 
 ```bash
 composer install
@@ -352,7 +327,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Lancer les migrations et les seeders :
+Exécuter les migrations et seeders :
 
 ```bash
 php artisan migrate --seed
@@ -366,7 +341,7 @@ php artisan serve
 
 ---
 
-### 3️⃣ Installation Frontend
+## 3. Installation du Frontend
 
 ```bash
 cd pharmacie-frontend
@@ -378,84 +353,101 @@ npm run dev
 
 ---
 
-## 🌐 URLs du Projet
+# 🌐 URLs du Projet
 
-| Service | URL |
-|----------|------|
-| Frontend | http://localhost:5173 |
+| Service     | URL                          |
+| ----------- | ---------------------------- |
+| Frontend    | http://localhost:5173        |
 | Backend API | http://127.0.0.1:8000/api/v1 |
 
 ---
 
-##  Base de Données
+# 🔑 Comptes de Démonstration
 
-### Tables (11 tables)
-
-| Table | Description |
-|---------|-------------|
-| users | Utilisateurs (avec rôle et pharmacy_id) |
-| pharmacies | Pharmacies (gestion multi-pharmacies) |
-| categories | Catégories de médicaments |
-| medicaments | Catalogue des médicaments |
-| stock_lots | Lots de stock |
-| clients | Clients |
-| ventes | Transactions de vente |
-| ligne_ventes | Détails des ventes |
-| fournisseurs | Fournisseurs |
-| commandes | Commandes fournisseurs |
-| ligne_commandes | Détails des commandes |
-
-### Relations
-
-```text
-Pharmacie (1) → User (n)
-Pharmacie (1) → Medicament (n)
-Pharmacie (1) → Vente (n)
-Pharmacie (1) → Client (n)
-
-Categorie (1) → Medicament (n)
-
-Medicament (1) → StockLot (n)
-
-Medicament (1) → LigneVente (n)
-LigneVente (n) → Vente (1)
-Vente (n) → Client (1)
-
-Vente (n) → User (1)
-
-Medicament (1) → LigneCommande (n)
-LigneCommande (n) → Commande (1)
-Commande (n) → Fournisseur (1)
-```
+| Rôle                 | Email                                                                       | Mot de passe |
+| -------------------- | --------------------------------------------------------------------------- | ------------ |
+| Super Administrateur | [superadmin@pharmacie.com](mailto:superadmin@pharmacie.com)                 | password     |
+| Administrateur       | [admin@pharmacie-centrale.sn](mailto:admin@pharmacie-centrale.sn)           | password     |
+| Pharmacien           | [pharmacien@pharmacie-centrale.sn](mailto:pharmacien@pharmacie-centrale.sn) | password     |
+| Caissier             | [caissier@pharmacie-centrale.sn](mailto:caissier@pharmacie-centrale.sn)     | password     |
 
 ---
 
-##  Seeders Disponibles
+# 🔌 Principaux Endpoints API
 
-| Seeder | Données générées |
-|----------|----------------|
-| RoleSeeder | 4 utilisateurs (super_admin, admin, pharmacien, caissier) |
-| PharmacieSeeder | 3 pharmacies |
-| CategorieSeeder | 7 catégories |
-| FournisseurSeeder | 4 fournisseurs |
-| MedicamentSeeder | 7 médicaments avec lots de stock |
-| ClientSeeder | 5 clients |
-| VenteSeeder | 4 ventes |
-| CommandeSeeder | 4 commandes |
+## Authentification
 
-### Exécution
-
-```bash
-php artisan db:seed
-```
+| Méthode | Endpoint       |
+| ------- | -------------- |
+| POST    | /api/v1/login  |
+| POST    | /api/v1/logout |
+| GET     | /api/v1/user   |
 
 ---
 
-## 📬 Documentation API
+## Médicaments
 
-La collection Postman est disponible dans le dossier :
+| Méthode | Endpoint                   |
+| ------- | -------------------------- |
+| GET     | /api/v1/medicaments        |
+| POST    | /api/v1/medicaments        |
+| PUT     | /api/v1/medicaments/{id}   |
+| DELETE  | /api/v1/medicaments/{id}   |
+| GET     | /api/v1/medicaments/export |
+| POST    | /api/v1/medicaments/import |
+
+---
+
+## Ventes
+
+| Méthode | Endpoint                       |
+| ------- | ------------------------------ |
+| GET     | /api/v1/ventes                 |
+| POST    | /api/v1/ventes                 |
+| GET     | /api/v1/ventes/{id}/pdf        |
+| GET     | /api/v1/ventes/{id}/send-email |
+
+---
+
+## Super Administrateur
+
+| Méthode | Endpoint                       |
+| ------- | ------------------------------ |
+| GET     | /api/v1/super-admin/stats      |
+| GET     | /api/v1/super-admin/pharmacies |
+| POST    | /api/v1/super-admin/pharmacies |
+| GET     | /api/v1/super-admin/users      |
+| GET     | /api/v1/backups                |
+| POST    | /api/v1/backups/create         |
+
+---
+
+# 📬 Documentation API
+
+La collection Postman est disponible dans :
 
 ```text
 docs/
 └── Pharmacie_API.postman_collection.json
 ```
+
+---
+
+# 📈 Évolutions Futures
+
+* Notifications temps réel
+* Gestion des ordonnances
+* Paiement mobile (Wave, Orange Money)
+* Application mobile Flutter
+* Tableau de bord avancé avec IA
+* Prévision automatique des ruptures de stock
+
+---
+
+# 👨‍💻 Auteur
+
+**Maurice Aurfe Enkoura**
+
+Étudiant en Licence 3 Génie Logiciel – ISI Dakar
+
+Projet académique et professionnel de gestion pharmaceutique.
