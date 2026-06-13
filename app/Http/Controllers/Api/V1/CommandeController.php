@@ -229,4 +229,41 @@ class CommandeController extends Controller
             ], 500);
         }
     }
+
+
+
+public function cancel($id)
+{
+    try {
+        $commande = Commande::findOrFail($id);
+        
+        if ($commande->statut === 'recue_complete') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Impossible d\'annuler une commande déjà réceptionnée'
+            ], 400);
+        }
+        
+        if ($commande->statut === 'annulee') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette commande est déjà annulée'
+            ], 400);
+        }
+        
+        $commande->statut = 'annulee';
+        $commande->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Commande annulée avec succès'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de l\'annulation: ' . $e->getMessage()
+        ], 500);
+    }
+}
 }

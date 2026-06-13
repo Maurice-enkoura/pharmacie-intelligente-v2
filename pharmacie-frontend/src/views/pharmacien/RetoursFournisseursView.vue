@@ -5,12 +5,21 @@
         <h1 class="text-2xl font-bold text-gray-800"> Retours fournisseurs</h1>
         <p class="text-sm text-gray-500 mt-1">Gérez les retours de médicaments (périmés, défectueux, etc.)</p>
       </div>
-      <button @click="showModal = true" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Nouveau retour
-      </button>
+      <div class="flex gap-3">
+        <!-- 🔥 BOUTON RETOUR VERS COMMANDES 🔥 -->
+        <router-link to="/commandes" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Retour aux commandes
+        </router-link>
+        <button @click="showModal = true" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Nouveau retour
+        </button>
+      </div>
     </div>
     
     <!-- Filtres -->
@@ -23,38 +32,48 @@
           <option value="refuse"> Refusé</option>
           <option value="traite"> Traité</option>
         </select>
-        <input type="date" v-model="filters.date_debut" @change="loadRetours" class="border rounded-lg px-3 py-2">
-        <input type="date" v-model="filters.date_fin" @change="loadRetours" class="border rounded-lg px-3 py-2">
-        <button @click="loadRetours" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">Filtrer</button>
+        <input type="date" v-model="filters.date_debut" @change="loadRetours" class="border rounded-lg px-3 py-2" placeholder="Date début">
+        <input type="date" v-model="filters.date_fin" @change="loadRetours" class="border rounded-lg px-3 py-2" placeholder="Date fin">
+        <button @click="loadRetours" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">🔍 Filtrer</button>
       </div>
     </div>
     
     <!-- Tableau -->
-    <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <div v-if="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+      <p class="mt-2 text-gray-500">Chargement des retours...</p>
+    </div>
+    
+    <div v-else class="bg-white rounded-lg shadow overflow-x-auto">
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-4 py-3 text-left"> N° Retour</th>
-            <th class="px-4 py-3 text-left"> Fournisseur</th>
-            <th class="px-4 py-3 text-center"> Date</th>
-            <th class="px-4 py-3 text-center"> Montant</th>
-            <th class="px-4 py-3 text-center"> Statut</th>
-            <th class="px-4 py-3 text-center"> Actions</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N° Retour</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date</th>
+            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Montant</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Statut</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="retour in retours" :key="retour.id" class="border-t hover:bg-gray-50">
-            <td class="px-4 py-3 font-medium">{{ retour.numero_retour }}</td>
-            <td class="px-4 py-3">{{ retour.fournisseur?.nom }}</td>
-            <td class="px-4 py-3 text-center">{{ formatDate(retour.date_retour) }}</td>
-            <td class="px-4 py-3 text-center font-medium">{{ formatPrice(retour.montant_total) }}</td>
+            <td class="px-4 py-3 font-medium text-gray-900">{{ retour.numero_retour }}</td>
+            <td class="px-4 py-3 text-gray-600">{{ retour.fournisseur?.nom || 'N/A' }}</td>
+            <td class="px-4 py-3 text-center text-gray-600">{{ formatDate(retour.date_retour) }}</td>
+            <td class="px-4 py-3 text-right font-medium text-orange-600">{{ formatPrice(retour.montant_total) }}</td>
             <td class="px-4 py-3 text-center">
               <span :class="getStatutClass(retour.statut)" class="px-2 py-1 rounded-full text-xs font-medium">
                 {{ getStatutLabel(retour.statut) }}
               </span>
             </td>
             <td class="px-4 py-3 text-center">
-              <button @click="voirDetails(retour)" class="text-blue-600 hover:text-blue-800"> Détails</button>
+              <button @click="voirDetails(retour)" class="text-blue-600 hover:text-blue-800 text-sm"> Détails</button>
+            </td>
+          </tr>
+          <tr v-if="retours.length === 0 && !loading">
+            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+              Aucun retour enregistré
             </td>
           </tr>
         </tbody>
@@ -64,56 +83,68 @@
     <!-- Modal création -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h2 class="text-xl font-bold mb-4">Nouveau retour fournisseur</h2>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold"> Nouveau retour fournisseur</h2>
+          <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
         
         <form @submit.prevent="submitRetour">
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label class="block text-sm font-medium mb-1">Fournisseur *</label>
+              <label class="block text-sm font-medium mb-1"> Fournisseur *</label>
               <select v-model="form.fournisseur_id" required class="w-full border rounded-lg px-3 py-2">
                 <option :value="null">-- Sélectionner --</option>
                 <option v-for="four in fournisseurs" :key="four.id" :value="four.id">{{ four.nom }}</option>
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1">Date retour *</label>
+              <label class="block text-sm font-medium mb-1"> Date retour *</label>
               <input type="date" v-model="form.date_retour" required class="w-full border rounded-lg px-3 py-2">
             </div>
           </div>
           
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Motif *</label>
+            <label class="block text-sm font-medium mb-1"> Motif *</label>
             <select v-model="form.motif" required class="w-full border rounded-lg px-3 py-2">
               <option value="perime"> Périmé</option>
               <option value="defectueux"> Défectueux</option>
-              <option value="erreur_commande"> Erreur de commande</option>
+              <option value="erreur_commande">Erreur de commande</option>
               <option value="autre"> Autre</option>
             </select>
           </div>
           
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Commentaire (optionnel)</label>
-            <textarea v-model="form.motif_commentaire" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea>
+            <label class="block text-sm font-medium mb-1"> Commentaire (optionnel)</label>
+            <textarea v-model="form.motif_commentaire" rows="2" class="w-full border rounded-lg px-3 py-2" placeholder="Informations supplémentaires..."></textarea>
           </div>
           
           <!-- Lignes de retour -->
           <div class="border-t pt-4 mt-4">
             <div class="flex justify-between items-center mb-3">
               <label class="font-medium"> Produits à retourner</label>
-              <button type="button" @click="ajouterLigne" class="text-green-600 text-sm">+ Ajouter un produit</button>
+              <button type="button" @click="ajouterLigne" class="text-orange-600 text-sm flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Ajouter un produit
+              </button>
             </div>
             
             <div v-for="(ligne, index) in form.lignes" :key="index" class="border rounded-lg p-3 mb-3 bg-gray-50">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="text-xs font-medium">Médicament</label>
+                  <label class="text-xs font-medium"> Médicament</label>
                   <select v-model="ligne.medicament_id" @change="loadLots(ligne)" class="w-full border rounded-lg px-2 py-1 text-sm">
                     <option :value="null">-- Choisir --</option>
                     <option v-for="med in medicaments" :key="med.id" :value="med.id">{{ med.nom }}</option>
                   </select>
                 </div>
                 <div>
-                  <label class="text-xs font-medium">Lot</label>
+                  <label class="text-xs font-medium"> Lot</label>
                   <select v-model="ligne.stock_lot_id" class="w-full border rounded-lg px-2 py-1 text-sm">
                     <option :value="null">-- Choisir --</option>
                     <option v-for="lot in lots[ligne.medicament_id]" :key="lot.id" :value="lot.id">
@@ -122,7 +153,7 @@
                   </select>
                 </div>
                 <div>
-                  <label class="text-xs font-medium">Quantité</label>
+                  <label class="text-xs font-medium"> Quantité</label>
                   <input type="number" v-model="ligne.quantite" min="1" class="w-full border rounded-lg px-2 py-1 text-sm">
                 </div>
                 <div class="flex items-end">
@@ -130,11 +161,15 @@
                 </div>
               </div>
             </div>
+            
+            <div v-if="form.lignes.length === 0" class="text-center text-gray-400 text-sm py-4">
+              Cliquez sur "Ajouter un produit" pour commencer
+            </div>
           </div>
           
           <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
-            <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg">Annuler</button>
-            <button type="submit" :disabled="submitting" class="px-4 py-2 bg-green-600 text-white rounded-lg">
+            <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Annuler</button>
+            <button type="submit" :disabled="submitting" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50">
               {{ submitting ? 'Enregistrement...' : 'Créer le retour' }}
             </button>
           </div>
@@ -205,7 +240,7 @@ const loadRetours = async () => {
     const response = await axios.get('/api/v1/retours-fournisseurs', { params: filters.value })
     retours.value = response.data.data || []
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Erreur chargement retours:', error)
   } finally {
     loading.value = false
   }
@@ -216,7 +251,7 @@ const loadFournisseurs = async () => {
     const response = await axios.get('/api/v1/fournisseurs')
     fournisseurs.value = response.data.data || []
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Erreur chargement fournisseurs:', error)
   }
 }
 
@@ -225,7 +260,7 @@ const loadMedicaments = async () => {
     const response = await axios.get('/api/v1/medicaments')
     medicaments.value = response.data.data || []
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Erreur chargement médicaments:', error)
   }
 }
 
@@ -235,7 +270,7 @@ const loadLots = async (ligne) => {
     const response = await axios.get(`/api/v1/stock/lots/${ligne.medicament_id}`)
     lots.value[ligne.medicament_id] = response.data || []
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Erreur chargement lots:', error)
   }
 }
 
@@ -254,7 +289,7 @@ const supprimerLigne = (index) => {
 
 const submitRetour = async () => {
   if (form.value.lignes.length === 0) {
-    alert('Ajoutez au moins un produit à retourner')
+    alert(' Ajoutez au moins un produit à retourner')
     return
   }
   
@@ -273,8 +308,7 @@ const submitRetour = async () => {
 }
 
 const voirDetails = (retour) => {
-  // TODO: Implémenter la vue détail
-  console.log('Détails du retour:', retour)
+  alert(` Détails du retour ${retour.numero_retour}\n Motif: ${retour.motif}\n Statut: ${getStatutLabel(retour.statut)}\n Montant: ${formatPrice(retour.montant_total)}`)
 }
 
 const closeModal = () => {

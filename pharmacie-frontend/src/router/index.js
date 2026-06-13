@@ -1,3 +1,4 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -19,7 +20,7 @@ import DashboardSuperAdmin from '@/views/super-admin/DashboardSuperAdmin.vue'
 import SuperAdminPharmacies from '@/views/admin/PharmaciesView.vue'
 import SuperAdminUtilisateurs from '@/views/super-admin/UtilisateursSuperAdmin.vue'
 import SuperAdminAbonnements from '@/views/super-admin/AbonnementsView.vue'
-import BackupsView from '@/views/super-admin/BackupsView.vue'  // ← AJOUTER CETTE LIGNE
+import BackupsView from '@/views/super-admin/BackupsView.vue'
 
 // Pharmacien Views
 import DashboardView from '@/views/pharmacien/DashboardView.vue'
@@ -34,6 +35,7 @@ import CommandesListView from '@/views/pharmacien/CommandesListView.vue'
 import CommandesFormView from '@/views/pharmacien/CommandesFormView.vue'
 import CommandesReceptionView from '@/views/pharmacien/CommandesReceptionView.vue'
 import RapportsView from '@/views/pharmacien/RapportsView.vue'
+import RetoursFournisseursView from '@/views/pharmacien/RetoursFournisseursView.vue'
 
 // Shared Views
 import VentesListView from '@/views/shared/VentesListView.vue'
@@ -63,36 +65,31 @@ const router = createRouter({
       component: MainLayout,
       meta: { requiresAuth: true },
       children: [
-        // ========== SUPER ADMIN (5 MENUS) ==========
-        // 1. Dashboard
+        // ========== SUPER ADMIN ==========
         {
           path: 'super-admin/dashboard',
           name: 'SuperAdminDashboard',
           component: DashboardSuperAdmin,
           meta: { roles: ['super_admin'] }
         },
-        // 2. Pharmacies
         {
           path: 'super-admin/pharmacies',
           name: 'SuperAdminPharmacies',
           component: SuperAdminPharmacies,
           meta: { roles: ['super_admin'] }
         },
-        // 3. Utilisateurs
         {
           path: 'super-admin/utilisateurs',
           name: 'SuperAdminUtilisateurs',
           component: SuperAdminUtilisateurs,
           meta: { roles: ['super_admin'] }
         },
-        // 4. Abonnements
         {
           path: 'super-admin/abonnements',
           name: 'SuperAdminAbonnements',
           component: SuperAdminAbonnements,
           meta: { roles: ['super_admin'] }
         },
-        // 5. Sauvegardes (NOUVEAU)
         {
           path: 'super-admin/backups',
           name: 'SuperAdminBackups',
@@ -100,7 +97,7 @@ const router = createRouter({
           meta: { roles: ['super_admin'] }
         },
         
-        // ========== ADMIN (dashboard classique) ==========
+        // ========== ADMIN ==========
         {
           path: 'admin/dashboard',
           name: 'AdminDashboard',
@@ -117,48 +114,6 @@ const router = createRouter({
           path: 'import-export',
           name: 'ImportExport',
           component: ImportExportMedicaments,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'fournisseurs',
-          name: 'FournisseursList',
-          component: FournisseursListView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'fournisseurs/create',
-          name: 'FournisseursCreate',
-          component: FournisseursFormView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'fournisseurs/:id/edit',
-          name: 'FournisseursEdit',
-          component: FournisseursFormView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'commandes',
-          name: 'CommandesList',
-          component: CommandesListView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'commandes/create',
-          name: 'CommandesCreate',
-          component: CommandesFormView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'commandes/:id/reception',
-          name: 'CommandesReception',
-          component: CommandesReceptionView,
-          meta: { roles: ['admin'] }
-        },
-        {
-          path: 'rapports',
-          name: 'Rapports',
-          component: RapportsView,
           meta: { roles: ['admin'] }
         },
         
@@ -203,6 +158,54 @@ const router = createRouter({
           path: 'stock/historique',
           name: 'StockHistorique',
           component: StockHistoriqueView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'fournisseurs',
+          name: 'FournisseursList',
+          component: FournisseursListView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'fournisseurs/create',
+          name: 'FournisseursCreate',
+          component: FournisseursFormView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'fournisseurs/:id/edit',
+          name: 'FournisseursEdit',
+          component: FournisseursFormView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'commandes',
+          name: 'CommandesList',
+          component: CommandesListView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'commandes/create',
+          name: 'CommandesCreate',
+          component: CommandesFormView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'commandes/:id/reception',
+          name: 'CommandesReception',
+          component: CommandesReceptionView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'retours-fournisseurs',
+          name: 'RetoursFournisseurs',
+          component: RetoursFournisseursView,
+          meta: { roles: ['admin', 'pharmacien'] }
+        },
+        {
+          path: 'rapports',
+          name: 'Rapports',
+          component: RapportsView,
           meta: { roles: ['admin', 'pharmacien'] }
         },
         

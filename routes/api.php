@@ -26,7 +26,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/register-pharmacy', [RegisterPharmacyController::class, 'register']);
 
     // ================= PROTECTED =================
-    Route::middleware(['auth:sanctum', 'pharmacy'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
@@ -79,10 +79,12 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('fournisseurs', FournisseurController::class);
         });
 
-        // COMMANDES
+        // COMMANDES (admin only)
         Route::middleware(['role:admin'])->group(function () {
             Route::apiResource('commandes', CommandeController::class);
             Route::put('/commandes/{id}/reception', [CommandeController::class, 'reception']);
+            Route::put('/commandes/{id}/cancel', [CommandeController::class, 'cancel']);
+           
         });
 
         // STOCK
@@ -94,10 +96,14 @@ Route::prefix('v1')->group(function () {
             Route::get('/stock/lots/{medicament_id}', [StockController::class, 'getLotsByMedicament']);
         });
 
-        // RETOURS FOURNISSEURS
+        // RETOURS FOURNISSEURS (admin et pharmacien)
         Route::middleware(['role:admin,pharmacien'])->group(function () {
-            Route::apiResource('retours-fournisseurs', RetourFournisseurController::class);
+            Route::get('/retours-fournisseurs', [RetourFournisseurController::class, 'index']);
+            Route::get('/retours-fournisseurs/{id}', [RetourFournisseurController::class, 'show']);
+            Route::post('/retours-fournisseurs', [RetourFournisseurController::class, 'store']);
+            Route::put('/retours-fournisseurs/{id}', [RetourFournisseurController::class, 'update']);
             Route::put('/retours-fournisseurs/{id}/statut', [RetourFournisseurController::class, 'updateStatut']);
+            Route::delete('/retours-fournisseurs/{id}', [RetourFournisseurController::class, 'destroy']);
         });
 
         // DASHBOARD
